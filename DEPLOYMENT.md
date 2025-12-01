@@ -151,7 +151,7 @@ eas build --platform ios
 `.env` 파일 생성:
 ```env
 API_BASE_URL=http://3.27.240.67:8000
-GOOGLE_MAPS_API_KEY=AIzaSyA7zE8nqLkNcSXjHPX9AVOZues3BsNczbA
+GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
 ```
 
 ---

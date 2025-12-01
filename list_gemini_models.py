@@ -4,7 +4,12 @@ List available Gemini models
 """
 import google.generativeai as genai
 
-GEMINI_API_KEY = 'AIzaSyA7zE8nqLkNcSXjHPX9AVOZues3BsNczbA'
+# API 키는 환경 변수에서 가져오세요
+# export GEMINI_API_KEY=your_key_here
+import os
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
+if not GEMINI_API_KEY:
+    raise ValueError("GEMINI_API_KEY 환경 변수가 설정되지 않았습니다")
 genai.configure(api_key=GEMINI_API_KEY)
 
 print("Available Gemini models:")

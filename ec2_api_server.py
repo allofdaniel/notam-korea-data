@@ -17,7 +17,8 @@ CORS(app)  # 모든 도메인에서 접근 허용
 DB_PATH = 'notam_realtime.db'
 
 # Google Gemini API 설정
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', 'AIzaSyA7zE8nqLkNcSXjHPX9AVOZues3BsNczbA')
+# export GEMINI_API_KEY=your_key_here
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
     # 가장 빠른 모델 사용
