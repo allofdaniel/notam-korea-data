@@ -1,0 +1,60 @@
+# AWS Credentials (절대 커밋 금지!)
+.aws/
+*.pem
+*.key
+credentials
+config
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Data files (크기가 큼)
+*.json
+*.csv
+
+# Deployment
+deployment/
+*.zip
+lambda_deployment.zip
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Logs
+*.log
+logs/
+
+# Environment variables
+.env
+.env.local
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Exception: Keep small example/config files
+!example.json
+!config.example.json
