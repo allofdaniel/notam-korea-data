@@ -29,14 +29,38 @@ function App() {
     try {
       setLoading(true)
 
+      // 캐시 확인 (5분간 유효, AWS 비용 절감)
+      const cacheKey = 'notam_data_cache'
+      const cached = sessionStorage.getItem(cacheKey)
+      if (cached) {
+        const { data, timestamp } = JSON.parse(cached)
+        const age = Date.now() - timestamp
+        if (age < 5 * 60 * 1000) { // 5분 이내
+          console.log(`📦 캐시에서 ${data.length}개 NOTAM 로드 (${Math.round(age/1000)}초 전)`)
+          setAllNotams(data)
+          // 통계만 새로 로드 (가벼움)
+          const statsResponse = await axios.get(`${API_BASE_URL}?path=/notams/stats`)
+          setStats(statsResponse.data)
+          setLoading(false)
+          return
+        }
+      }
+
       // 통계 로드
       const statsResponse = await axios.get(`${API_BASE_URL}?path=/notams/stats`)
       setStats(statsResponse.data)
 
       // 활성 NOTAM 로드 (전체 로드 - 지도 표시용)
       const notamsResponse = await axios.get(`${API_BASE_URL}?path=/notams/realtime?limit=50000`)
-      setAllNotams(notamsResponse.data.data || [])
-      console.log(`📋 ${notamsResponse.data.data?.length || 0}개 NOTAM 로드됨 (전체 ${notamsResponse.data.count || 0}개 중)`)
+      const notamData = notamsResponse.data.data || []
+      setAllNotams(notamData)
+      console.log(`📋 ${notamData.length}개 NOTAM 로드됨 (전체 ${notamsResponse.data.count || 0}개 중)`)
+
+      // 캐시에 저장 (5분간 유효)
+      sessionStorage.setItem(cacheKey, JSON.stringify({
+        data: notamData,
+        timestamp: Date.now()
+      }))
 
       // 최근 7일 추세 로드
       const days = []

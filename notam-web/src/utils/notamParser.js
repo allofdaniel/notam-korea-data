@@ -141,7 +141,8 @@ export const parseNotamCoordinates = (notam) => {
   const fullText = notam.full_text || ''
   if (fullText) {
     // Q) 라인 찾기: Q) FIR/QCODE/TRAFFIC/PURPOSE/SCOPE/LOWER/UPPER/DDMMNDDDMMEW###
-    const qLineMatch = fullText.match(/Q\)\s+([^\r\n]+)/i)
+    // 한국 NOTAM: Q)RKRR (공백없음), 국제 NOTAM: Q) EPWW (공백있음)
+    const qLineMatch = fullText.match(/Q\)\s*([^\r\n]+)/i)
     if (qLineMatch) {
       const qLine = qLineMatch[1]
       // Q) 라인 끝에서 좌표 추출 (예: 6449N14751W005 또는 3728N12653E010)
