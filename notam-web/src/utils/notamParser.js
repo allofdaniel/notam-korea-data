@@ -134,27 +134,49 @@ export const nmToKm = (nm) => {
 }
 
 /**
- * NOTAM에서 좌표 정보 추출 (Q-code 우선, E) 텍스트 보조)
+ * NOTAM에서 좌표 정보 추출 (Q) 라인 우선, E) 텍스트 보조)
  */
 export const parseNotamCoordinates = (notam) => {
-  // 1. Q-code에서 좌표 추출 시도 (qcode와 q_code 모두 확인)
+  // 1. full_text의 Q) 라인에서 좌표 추출 (가장 정확)
+  const fullText = notam.full_text || ''
+  if (fullText) {
+    // Q) 라인 찾기: Q) FIR/QCODE/TRAFFIC/PURPOSE/SCOPE/LOWER/UPPER/DDMMNDDDMMEW###
+    const qLineMatch = fullText.match(/Q\)\s+([^\r\n]+)/i)
+    if (qLineMatch) {
+      const qLine = qLineMatch[1]
+      // Q) 라인 끝에서 좌표 추출 (예: 6449N14751W005 또는 3728N12653E010)
+      const qcodeCoord = parseQCodeCoordinate(qLine)
+      if (qcodeCoord) {
+        return {
+          type: 'circle',
+          center: [qcodeCoord.longitude, qcodeCoord.latitude],
+          radius: nmToKm(qcodeCoord.radius),
+          radiusNM: qcodeCoord.radius,
+          source: 'Q-line'
+        }
+      }
+    }
+  }
+
+  // 2. qcode 필드에서 시도 (레거시)
   const qcodeValue = notam.qcode || notam.q_code
   if (qcodeValue) {
     const qcodeCoord = parseQCodeCoordinate(qcodeValue)
     if (qcodeCoord) {
       return {
         type: 'circle',
-        center: [qcodeCoord.longitude, qcodeCoord.latitude], // [lng, lat] for Mapbox
-        radius: nmToKm(qcodeCoord.radius), // km로 변환
-        radiusNM: qcodeCoord.radius
+        center: [qcodeCoord.longitude, qcodeCoord.latitude],
+        radius: nmToKm(qcodeCoord.radius),
+        radiusNM: qcodeCoord.radius,
+        source: 'qcode-field'
       }
     }
   }
 
-  // 2. E) 텍스트에서 좌표 추출
-  const fullText = notam.full_text || notam.e_text || ''
-  const coords = extractCoordinates(fullText)
-  const radiusInfo = extractRadius(fullText)
+  // 3. E) 텍스트에서 좌표 추출
+  const eText = notam.e_text || notam.full_text || ''
+  const coords = extractCoordinates(eText)
+  const radiusInfo = extractRadius(eText)
 
   if (coords.length > 0) {
     if (coords.length === 1 && radiusInfo) {
