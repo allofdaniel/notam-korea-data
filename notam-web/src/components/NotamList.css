@@ -1,0 +1,239 @@
+.notam-list-container {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.notam-filters {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.search-input {
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.filter-select {
+  padding: 12px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.filter-summary {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  font-weight: 600;
+  color: #667eea;
+  white-space: nowrap;
+}
+
+.notam-list {
+  display: grid;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.notam-card {
+  border: 2px solid #f0f0f0;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.notam-card:hover {
+  border-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+}
+
+.notam-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.notam-id-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notam-id {
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1a1a2e;
+}
+
+.notam-location {
+  font-weight: 600;
+  color: #667eea;
+  font-size: 13px;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.status-active {
+  background: #00C49F20;
+  color: #00C49F;
+}
+
+.status-expired {
+  background: #FF804220;
+  color: #FF8042;
+}
+
+.status-scheduled {
+  background: #0088FE20;
+  color: #0088FE;
+}
+
+.status-trigger {
+  background: #FFBB2820;
+  color: #FFBB28;
+}
+
+.status-permanent {
+  background: #2196F320;
+  color: #2196F3;
+}
+
+.status-unknown {
+  background: #e0e0e0;
+  color: #666;
+}
+
+.notam-qcode {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.notam-qcode strong {
+  color: #333;
+}
+
+.notam-dates {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 12px;
+}
+
+.date-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.date-label {
+  font-size: 11px;
+  color: #999;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.date-value {
+  font-size: 13px;
+  color: #333;
+  font-family: 'Courier New', monospace;
+}
+
+.notam-preview {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.empty-state p {
+  font-size: 16px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.page-btn {
+  padding: 10px 20px;
+  border: 2px solid #667eea;
+  background: white;
+  color: #667eea;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.page-btn:hover:not(:disabled) {
+  background: #667eea;
+  color: white;
+}
+
+.page-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-weight: 600;
+  color: #667eea;
+}
+
+@media (max-width: 768px) {
+  .notam-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .notam-dates {
+    grid-template-columns: 1fr;
+  }
+
+  .notam-id-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}

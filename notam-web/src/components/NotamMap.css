@@ -1,0 +1,87 @@
+.notam-map-container {
+  position: relative;
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.notam-popup {
+  padding: 10px;
+  max-width: 300px;
+}
+
+.notam-popup h3 {
+  margin: 0 0 10px 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1a2e;
+}
+
+.notam-popup p {
+  margin: 5px 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.notam-popup strong {
+  color: #333;
+}
+
+.notam-text {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  font-size: 12px;
+  color: #888;
+  font-style: italic;
+}
+
+.map-info {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.map-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.legend-color {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+  .map-info {
+    top: 10px;
+    right: 10px;
+    padding: 10px;
+  }
+
+  .legend-item {
+    font-size: 11px;
+  }
+
+  .legend-color {
+    width: 16px;
+    height: 16px;
+  }
+}

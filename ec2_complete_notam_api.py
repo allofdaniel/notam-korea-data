@@ -77,12 +77,27 @@ def categorize_notams(notams, filter_date=None):
     """NOTAM 분류 및 통계"""
     current_time = datetime.now()
 
-    # 날짜 필터링
+    # 날짜 필터링: 해당 날짜에 활성이었던 NOTAM
     if filter_date:
         try:
             filter_dt = datetime.strptime(filter_date, '%Y-%m-%d')
-            notams = [n for n in notams if n.get('crawl_date', '').startswith(filter_date)]
-        except:
+            filter_dt = filter_dt.replace(hour=12, minute=0)  # 해당 날짜 정오 기준
+
+            # 해당 날짜에 활성이었던 NOTAM만 필터링
+            filtered = []
+            for n in notams:
+                start = parse_notam_date(n.get('effective_start', ''))
+                end = parse_notam_date(n.get('effective_end', ''))
+
+                # 시작일이 filter_date 이전이고, 종료일이 filter_date 이후인 NOTAM
+                if start and start <= filter_dt:
+                    if not end or end >= filter_dt:
+                        filtered.append(n)
+
+            notams = filtered
+            current_time = filter_dt  # 필터 날짜 기준으로 상태 계산
+        except Exception as e:
+            print(f"[WARN] 날짜 필터링 오류: {e}")
             pass
 
     categorized = {
@@ -131,6 +146,24 @@ def get_active():
     return jsonify({
         'stats': stats,
         'data': categorized['active']
+    })
+
+@app.route('/notams/realtime', methods=['GET'])
+def get_realtime():
+    """실시간 NOTAM (활성 NOTAM, 이전 API 호환)"""
+    filter_date = request.args.get('date')
+    limit = int(request.args.get('limit', 10000))  # 기본 10000개 (성능 개선)
+
+    all_notams = load_all_notams()
+    categorized, stats = categorize_notams(all_notams, filter_date)
+
+    active_notams = categorized['active'][:limit]
+
+    # 이전 API 형식과 호환: { count, data }
+    return jsonify({
+        'count': len(categorized['active']),  # 전체 개수
+        'data': active_notams,  # limit 적용된 데이터
+        'returned': len(active_notams)  # 실제 반환된 개수
     })
 
 @app.route('/notams/expired', methods=['GET'])
@@ -208,6 +241,7 @@ if __name__ == '__main__':
     load_all_notams()
 
     print("\n엔드포인트:")
+    print("  GET /notams/realtime  ← 실시간 (이전 API 호환)")
     print("  GET /notams/stats")
     print("  GET /notams/active")
     print("  GET /notams/expired")
