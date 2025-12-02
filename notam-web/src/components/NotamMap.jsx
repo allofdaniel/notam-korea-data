@@ -21,12 +21,22 @@ const NotamMap = ({ notams = [] }) => {
 
     const parsedCircles = []
     const parsedPolygons = []
+    const failedNotams = []
 
     notams.forEach((notam, index) => {
       // Q-code와 E) 텍스트에서 좌표 실시간 파싱
       const coordinates = parseNotamCoordinates(notam)
 
-      if (!coordinates) return
+      if (!coordinates) {
+        // 파싱 실패한 NOTAM 기록
+        failedNotams.push({
+          id: notam.id,
+          location: notam.location || notam.a_location,
+          qcode: notam.qcode || notam.q_code,
+          hasEText: !!(notam.e_text || notam.full_text)
+        })
+        return
+      }
 
       if (coordinates.type === 'circle') {
         parsedCircles.push({
@@ -45,6 +55,15 @@ const NotamMap = ({ notams = [] }) => {
     })
 
     console.log(`🗺️ 파싱 결과: 원형 ${parsedCircles.length}개, 다각형 ${parsedPolygons.length}개`)
+    console.log(`❌ 파싱 실패: ${failedNotams.length}개 (전체 ${notams.length}개 중)`)
+
+    // 실패한 NOTAM 중 처음 5개만 샘플 출력
+    if (failedNotams.length > 0) {
+      console.log('📋 파싱 실패 샘플 (처음 5개):')
+      failedNotams.slice(0, 5).forEach(n => {
+        console.log(`  - ${n.id} (${n.location}): Q-code=${n.qcode || 'N/A'}, E-text=${n.hasEText ? 'Yes' : 'No'}`)
+      })
+    }
 
     setCircles(parsedCircles)
     setPolygons(parsedPolygons)

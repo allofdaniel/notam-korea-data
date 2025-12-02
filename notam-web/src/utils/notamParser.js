@@ -72,16 +72,31 @@ export const extractCoordinates = (notamText) => {
 
   if (!notamText) return coordinates
 
-  // DMS 형식 찾기 (DDMMSSNDDMMSSW)
-  const dmsPattern = /\d{6}[NS]\s*\d{7}[EW]/g
-  const dmsMatches = notamText.match(dmsPattern)
+  // DMS 형식 찾기 (DDMMSSNDDMMSSW) - 한국 좌표 포함
+  const dmsPatterns = [
+    /\d{6}[NS]\s*\d{7}[EW]/g,  // 372818N 1265330E
+    /\d{6}[NS]\d{7}[EW]/g,      // 372818N1265330E (공백 없음)
+    /\d{4}[NS]\s*\d{5}[EW]/g,   // DDMMN DDMMME (짧은 형식)
+  ]
 
-  if (dmsMatches) {
-    dmsMatches.forEach(match => {
-      const coord = parseDMSCoordinate(match)
-      if (coord) coordinates.push(coord)
-    })
-  }
+  dmsPatterns.forEach(pattern => {
+    const matches = notamText.match(pattern)
+    if (matches) {
+      matches.forEach(match => {
+        const coord = parseDMSCoordinate(match)
+        if (coord) {
+          // 중복 방지
+          const isDuplicate = coordinates.some(c =>
+            Math.abs(c.latitude - coord.latitude) < 0.001 &&
+            Math.abs(c.longitude - coord.longitude) < 0.001
+          )
+          if (!isDuplicate) {
+            coordinates.push(coord)
+          }
+        }
+      })
+    }
+  })
 
   return coordinates
 }
@@ -122,9 +137,10 @@ export const nmToKm = (nm) => {
  * NOTAM에서 좌표 정보 추출 (Q-code 우선, E) 텍스트 보조)
  */
 export const parseNotamCoordinates = (notam) => {
-  // 1. Q-code에서 좌표 추출 시도
-  if (notam.qcode) {
-    const qcodeCoord = parseQCodeCoordinate(notam.qcode)
+  // 1. Q-code에서 좌표 추출 시도 (qcode와 q_code 모두 확인)
+  const qcodeValue = notam.qcode || notam.q_code
+  if (qcodeValue) {
+    const qcodeCoord = parseQCodeCoordinate(qcodeValue)
     if (qcodeCoord) {
       return {
         type: 'circle',
