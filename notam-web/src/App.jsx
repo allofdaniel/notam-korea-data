@@ -33,10 +33,10 @@ function App() {
       const statsResponse = await axios.get(`${API_BASE_URL}?path=/notams/stats`)
       setStats(statsResponse.data)
 
-      // 활성 NOTAM 로드 (지도/리스트용 - 5000개 제한)
-      const notamsResponse = await axios.get(`${API_BASE_URL}?path=/notams/realtime?limit=5000`)
+      // 활성 NOTAM 로드 (전체 로드 - 지도 표시용)
+      const notamsResponse = await axios.get(`${API_BASE_URL}?path=/notams/realtime?limit=50000`)
       setAllNotams(notamsResponse.data.data || [])
-      console.log(`📋 ${notamsResponse.data.data?.length || 0}개 NOTAM 로드됨`)
+      console.log(`📋 ${notamsResponse.data.data?.length || 0}개 NOTAM 로드됨 (전체 ${notamsResponse.data.count || 0}개 중)`)
 
       // 최근 7일 추세 로드
       const days = []

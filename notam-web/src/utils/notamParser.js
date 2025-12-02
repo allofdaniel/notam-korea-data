@@ -155,6 +155,12 @@ export const parseNotamCoordinates = (notam) => {
           source: 'Q-line'
         }
       }
+      // 디버깅: Q) 라인은 있지만 좌표 파싱 실패
+      if (window.__NOTAM_DEBUG_COUNT === undefined) window.__NOTAM_DEBUG_COUNT = 0
+      if (window.__NOTAM_DEBUG_COUNT < 3) {
+        console.log(`[DEBUG] Q-line 파싱 실패 샘플:`, qLine.substring(0, 100))
+        window.__NOTAM_DEBUG_COUNT++
+      }
     }
   }
 
