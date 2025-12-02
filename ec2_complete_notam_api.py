@@ -6,28 +6,68 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import boto3
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 CORS(app)
 
 s3 = boto3.client('s3')
 BUCKET_NAME = 'notam-korea-data'
-COMPLETE_DATA_KEY = 'notam_complete/20251201_100751/notam_final_complete.json'
+REALTIME_PREFIX = 'notam_realtime/'
 
-# 전체 NOTAM 캐시 (서버 시작 시 한 번만 로드)
+# 전체 NOTAM 캐시 (1시간마다 갱신)
 ALL_NOTAMS = None
+LAST_LOAD_TIME = None
+
+def get_latest_realtime_file():
+    """S3에서 가장 최신 realtime 파일 찾기"""
+    # 오늘 날짜 폴더
+    today = datetime.now().strftime('%Y-%m-%d')
+    prefix = f"{REALTIME_PREFIX}{today}/"
+
+    try:
+        response = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=prefix)
+        if 'Contents' not in response:
+            # 오늘 데이터 없으면 어제 시도
+            yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+            prefix = f"{REALTIME_PREFIX}{yesterday}/"
+            response = s3.list_objects_v2(Bucket=BUCKET_NAME, Prefix=prefix)
+
+        if 'Contents' in response:
+            # 최신 파일 찾기
+            files = sorted(response['Contents'], key=lambda x: x['LastModified'], reverse=True)
+            return files[0]['Key']
+    except Exception as e:
+        print(f"[WARN] 최신 파일 찾기 실패: {e}")
+
+    return None
 
 def load_all_notams():
-    """S3에서 전체 NOTAM 로드 (한 번만)"""
-    global ALL_NOTAMS
-    if ALL_NOTAMS is not None:
-        return ALL_NOTAMS
+    """S3에서 최신 NOTAM 로드 (1시간마다 캐시 갱신)"""
+    global ALL_NOTAMS, LAST_LOAD_TIME
 
-    print(f"[LOAD] S3에서 전체 NOTAM 로드 중: {COMPLETE_DATA_KEY}")
-    obj = s3.get_object(Bucket=BUCKET_NAME, Key=COMPLETE_DATA_KEY)
-    ALL_NOTAMS = json.loads(obj['Body'].read().decode('utf-8'))
-    print(f"[OK] {len(ALL_NOTAMS)}개 NOTAM 로드 완료")
+    now = datetime.now()
+
+    # 1시간 이내면 캐시 사용
+    if ALL_NOTAMS is not None and LAST_LOAD_TIME is not None:
+        if (now - LAST_LOAD_TIME).total_seconds() < 3600:
+            return ALL_NOTAMS
+
+    # 최신 파일 로드
+    latest_key = get_latest_realtime_file()
+    if not latest_key:
+        print("[ERROR] 최신 NOTAM 파일을 찾을 수 없음")
+        return []
+
+    print(f"[LOAD] S3에서 최신 NOTAM 로드 중: {latest_key}")
+    obj = s3.get_object(Bucket=BUCKET_NAME, Key=latest_key)
+    data = json.loads(obj['Body'].read().decode('utf-8'))
+
+    # 배열로 저장되어 있음
+    ALL_NOTAMS = data if isinstance(data, list) else []
+    LAST_LOAD_TIME = now
+
+    print(f"[OK] {len(ALL_NOTAMS)}개 NOTAM 로드 완료 (from {latest_key})")
     return ALL_NOTAMS
 
 def parse_notam_date(date_str):
