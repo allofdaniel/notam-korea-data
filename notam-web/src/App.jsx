@@ -50,8 +50,8 @@ function App() {
       const statsResponse = await axios.get(`${API_BASE_URL}?path=/notams/stats`)
       setStats(statsResponse.data)
 
-      // 활성 NOTAM 로드 (최근 15,000개 - 지도 표시 충분)
-      const notamsResponse = await axios.get(`${API_BASE_URL}?path=/notams/realtime?limit=15000`)
+      // 활성 NOTAM 로드 (최근 5,000개 - Lambda 응답 크기 제한)
+      const notamsResponse = await axios.get(`${API_BASE_URL}?path=/notams/realtime?limit=5000`)
       const notamData = notamsResponse.data.data || []
       setAllNotams(notamData)
       console.log(`📋 ${notamData.length}개 NOTAM 로드됨 (전체 ${notamsResponse.data.count || 0}개 중)`)

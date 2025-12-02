@@ -1,4 +1,4 @@
-// Vercel Serverless Function - EC2 API 프록시 (임시: Lambda 대용량 처리 이슈)
+// Vercel Serverless Function - Lambda API 프록시 (초경량 응답)
 export default async function handler(req, res) {
   // CORS 설정
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -12,11 +12,11 @@ export default async function handler(req, res) {
   try {
     const { path } = req.query
 
-    // EC2 API (안정적, 대용량 처리 가능)
-    const EC2_API_URL = 'http://3.27.240.67:8000'
-    const url = `${EC2_API_URL}${path || '/notams/stats'}`
+    // Lambda API (초경량 응답 버전)
+    const LAMBDA_API_URL = 'https://b5hg4r5aoqoit35vhxzo2v75wi0vryxq.lambda-url.ap-southeast-2.on.aws'
+    const url = `${LAMBDA_API_URL}${path || '/health'}`
 
-    console.log('[Proxy] EC2:', url)
+    console.log('[Proxy] Lambda:', url)
 
     const response = await fetch(url)
     const data = await response.json()
