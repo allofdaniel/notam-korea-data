@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.notam_web.twa",
+        "sha256_cert_fingerprints": ["94:75:6A:4F:FE:1F:28:2E:AE:5E:8C:1C:29:04:D0:82:D2:B8:34:A8:08:0C:55:5E:B5:61:8B:D6:6E:BB:37:CF"]
+      }
+    }]
