@@ -1,5 +1,8 @@
 # Korean NOTAM Data
 
+[![CI](https://github.com/allofdaniel/notam-korea-data/actions/workflows/ci.yml/badge.svg)](https://github.com/allofdaniel/notam-korea-data/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Open-source tooling for collecting, normalizing, and monitoring Korean NOTAM data.
 
 Korea does not currently offer an easy public developer-facing NOTAM API. This project is an attempt to close that gap with reusable collection and monitoring code that other developers can build on.
