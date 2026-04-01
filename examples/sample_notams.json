@@ -1,0 +1,24 @@
+[
+  {
+    "notam_no": "A0001/26",
+    "location": "RKSI",
+    "notam_type": "A",
+    "issue_time": "2604010000",
+    "start_time": "2604010100",
+    "end_time": "2604010700",
+    "qcode": "QMRLC",
+    "full_text": "RWY inspection in progress",
+    "full_text_detail": "Q) RKRR/QMRLC/IV/NBO/A /000/999/3747N12627E005 E) RWY inspection in progress"
+  },
+  {
+    "notam_no": "A0002/26",
+    "location": "RKSS",
+    "notam_type": "A",
+    "issue_time": "2604010200",
+    "start_time": "2604010300",
+    "end_time": "2604010900",
+    "qcode": "QFAXX",
+    "full_text": "Apron work in progress",
+    "full_text_detail": "Q) RKRR/QFAXX/IV/NBO/A /000/999/3733N12648E005 E) Apron work in progress"
+  }
+]

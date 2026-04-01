@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install base dependencies
+        run: pip install -r requirements.txt
+      - name: Compile Python files
+        run: python -m py_compile notam_crawler_api.py notam_crawler.py notam_hybrid_crawler.py notam_change_detector.py notam_monitor.py
